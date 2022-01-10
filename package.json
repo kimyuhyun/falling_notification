@@ -91,7 +91,6 @@
         "process-nextick-args": "^2.0.1",
         "promise": "^6.1.0",
         "proxy-addr": "^2.0.6",
-        "puppeteer": "^13.0.1",
         "qs": "^6.5.2",
         "random-bytes": "^1.0.0",
         "range-parser": "^1.2.1",
