@@ -1,0 +1,137 @@
+extends layout
+
+block content
+    div(class='row mt-4')
+        div(class='col-6 col-lg-3 offset-lg-3')
+            div(class='card shadow mb-4')
+                div(class='card-body')
+                    div(id='tree')
+        div(class='col-6 col-lg-3')
+            div(id='form')
+                div(class='w2ui-page page-0')
+                    div(class='w2ui-field w2ui-span2')
+                        label 코드
+                        div
+                            input(name='code1', readonly)
+                    div(class='w2ui-field w2ui-span2')
+                        label 코드명
+                        div
+                            input(name='name1')
+                    div(class='w2ui-field w2ui-span2')
+                        label 정렬순서
+                        div
+                            input(name='sort1')
+                        
+
+                div(class='w2ui-buttons')
+                    button(class='w2ui-btn' name='add') 추가
+                    button(class='w2ui-btn w2ui-btn-red' name='del') 삭제
+                    button(class='w2ui-btn w2ui-btn-blue' name='update') 저장
+                    
+            
+                        
+    script(src='/javascripts/jstree.js')
+    script.
+        $('#tree').jstree({
+            plugins: ['crrm', 'dnd'],
+            core: {
+                data: {
+                    url: "/admin/codes",
+                    data: function(node) {
+                        return {
+                            id: node.id,
+                        };
+                    }
+                }
+            },
+        });
+                
+        $('#tree').on('ready.jstree', function() {
+            $("#tree").jstree("open_all");          
+        });
+        
+        $('#tree').bind('select_node.jstree', function(event, data){
+        	// 노드를 선택했을 때 적용할 코드 작성
+            w2ui.form.record.code1 = data.node.id;
+            w2ui.form.record.name1 = data.node.text;
+            w2ui.form.record.sort1 = data.node.data;
+            w2ui.form.refresh();
+            
+            console.log(w2ui.form.record);
+        });
+        
+        
+        let form = {
+            name: 'form',
+            fields: [
+                { field: 'code1', type: 'text', required: true },
+                { field: 'name1', type: 'text', required: true },
+                { field: 'sort1', type: 'text', required: false },
+            ],
+            actions: {
+                add: function () {
+                    let errors = this.validate();
+                    if (errors.length > 0) {
+                        return;
+                    }
+                    
+                    var data = {};
+                    data.parent_code = w2ui.form.record.code1;
+                    
+                    axios.post('/admin/add_code', data).then(function (res) {
+                        console.dir(res.data);
+                        if (res.data.code != '') {
+                            $('#tree').jstree(true).refresh();
+                        }
+                    });
+                },
+                del: function () {
+                    let errors = this.validate();
+                    if (errors.length > 0) {
+                        return;
+                    }
+                    
+                    if (confirm("삭제하시겠습니까?")) {
+                        axios.post('/admin/delete_code', { code1: w2ui.form.record.code1 }).then(function (res) {
+                            console.dir(res.data);
+                            $('#tree').jstree(true).refresh();
+                        });    
+                    }
+                },
+                update: function () {
+                    let errors = this.validate();
+                    if (errors.length > 0) {
+                        return;
+                    }
+                    
+                    axios.post('/admin/modify_code', w2ui.form.record).then(function (res) {
+                        console.dir(res.data);
+                        $('#tree').jstree(true).refresh();
+                    });
+                }
+            },
+            onError: function (e) {
+                console.log(e.xhr.responseText);
+            }
+        };
+        
+        $(function () {
+            $('#form').w2form(form);
+        });
+        
+        function formSubmit() {
+            var gsWin = window.open("about:blank", "winName");
+            var frm1 = document.frm1;
+            frm1.action = '../../cc';
+            frm1.target="winName";
+            frm1.submit();
+        }
+        
+        $(document).keydown(function(e) {
+            console.log(e.which);
+            if (e.ctrlKey && e.which == 83) { // Alt + s in that order
+                console.log("pressed");
+                $("button[name='update']").trigger('click');
+                
+            }
+        });
