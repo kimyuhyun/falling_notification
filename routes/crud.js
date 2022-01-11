@@ -186,6 +186,7 @@ router.post('/write', userChecking, upload.array('FILES'), async function(req, r
                 arr['msg'] = '등록 되었습니다.';
                 res.send(arr);
             } else {
+                console.log(err);
                 res.send(err);
             }
         });
@@ -202,6 +203,7 @@ router.post('/write', userChecking, upload.array('FILES'), async function(req, r
                     res.send(arr);
                 });
             } else {
+                console.log(err);
                 res.send(err);
             }
         });
