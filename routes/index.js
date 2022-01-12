@@ -57,7 +57,7 @@ router.get('/', function(req, res, next) {
     });
 
     res.render('index', {
-        title: 'Calculator api',
+        title: 'Falling notification api',
         session: `${ip}`,
         mode: process.env.NODE_ENV,
     });
