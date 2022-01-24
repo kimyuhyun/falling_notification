@@ -2,11 +2,11 @@ extends layout
 
 block content
     div(class='row mt-4')
-        div(class='col-6 col-lg-3 offset-lg-3')
+        div(class='col-3')
             div(class='card shadow mb-4')
                 div(class='card-body')
                     div(id='tree')
-        div(class='col-6 col-lg-3')
+        div(class='col-3')
             div(id='form')
                 div(class='w2ui-page page-0')
                     div(class='w2ui-field w2ui-span2')
@@ -61,7 +61,7 @@ block content
         });
         
         
-        let form = {
+        const form = {
             name: 'form',
             fields: [
                 { field: 'code1', type: 'text', required: true },
@@ -70,7 +70,7 @@ block content
             ],
             actions: {
                 add: function () {
-                    let errors = this.validate();
+                    const errors = this.validate();
                     if (errors.length > 0) {
                         return;
                     }
@@ -86,7 +86,7 @@ block content
                     });
                 },
                 del: function () {
-                    let errors = this.validate();
+                    const errors = this.validate();
                     if (errors.length > 0) {
                         return;
                     }
@@ -99,7 +99,7 @@ block content
                     }
                 },
                 update: function () {
-                    let errors = this.validate();
+                    const errors = this.validate();
                     if (errors.length > 0) {
                         return;
                     }

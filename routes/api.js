@@ -77,7 +77,7 @@ async function setLog(req, res, next) {
 }
 
 router.get('/get_episode/:code1', setLog, async function(req, res, next) {
-    let code1 = req.params.code1;
+    const code1 = req.params.code1;
 
     var arr = [];
     await new Promise(function(resolve, reject) {
@@ -100,7 +100,7 @@ router.get('/get_episode/:code1', setLog, async function(req, res, next) {
 });
 
 router.get('/get_quiz/:code1', setLog, async function(req, res, next) {
-    let code1 = req.params.code1;
+    const code1 = req.params.code1;
 
     var arr = [];
     await new Promise(function(resolve, reject) {
@@ -123,7 +123,7 @@ router.get('/get_quiz/:code1', setLog, async function(req, res, next) {
 });
 
 router.get('/get_rand_quiz/:code1', setLog, async function(req, res, next) {
-    let code1 = req.params.code1;
+    const code1 = req.params.code1;
     var subjectArr = [];
     var arr = [];
     var i = 0;

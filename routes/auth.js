@@ -13,7 +13,7 @@ async function setLog(req, res, next) {
     const ip = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
     var rows;
     await new Promise(function(resolve, reject) {
-        const sql = `SELECT visit FROM ANALYZER_tbl WHERE ip = ? ORDER BY idx DESC LIMIT 0, 1`;
+        var sql = `SELECT visit FROM ANALYZER_tbl WHERE ip = ? ORDER BY idx DESC LIMIT 0, 1`;
         db.query(sql, ip, function(err, rows, fields) {
             if (!err) {
                 resolve(rows);
@@ -24,7 +24,7 @@ async function setLog(req, res, next) {
     });
 
     await new Promise(function(resolve, reject) {
-        const sql = `INSERT INTO ANALYZER_tbl SET ip = ?, agent = ?, visit = ?, created = NOW()`;
+        var sql = `INSERT INTO ANALYZER_tbl SET ip = ?, agent = ?, visit = ?, created = NOW()`;
         if (rows.length > 0) {
             var cnt = rows[0].visit + 1;
             db.query(sql, [ip, req.headers['user-agent'], cnt], function(err, rows, fields) {
@@ -50,27 +50,26 @@ async function setLog(req, res, next) {
 
 
 
-router.get('/', setLog, async function(req, res, next) {
+router.get('/is_memb/:id', setLog, async function(req, res, next) {
+    const id = req.params.id;
 
-    // var arr = [];
-    // await new Promise(function(resolve, reject) {
-    //     const sql = ``;
-    //     db.query(sql, function(err, rows, fields) {
-    //         console.log(rows);
-    //         if (!err) {
-    //             resolve(rows);
-    //         } else {
-    //             console.log(err);
-    //             res.send(err);
-    //             return;
-    //         }
-    //     });
-    // }).then(async function(data) {
-    //     arr = await utils.nvl(data);
-    // });
-    // res.send(arr);
+    //이미 회원인지 체크
+    await new Promise(function(resolve, reject) {
+        const sql = `SELECT *, count(*) as cnt FROM MEMB_tbl WHERE id = ?`;
+        db.query(sql, id, function(err, rows, fields) {
+            console.log(rows);
+            if (!err) {
+                resolve(rows[0]);
+            } else {
+                console.log(err);
+                res.send(err);
+                return;
+            }
+        });
+    }).then(async function(data) {
+        res.send(data);
+    });
 
-    res.send('api');
 });
 
 

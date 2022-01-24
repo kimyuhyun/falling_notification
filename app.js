@@ -17,6 +17,9 @@ const apiCrudRouter = require('./routes/apiCrud');
 const analyzerRouter = require('./routes/analyzer');
 const articleRouter = require('./routes/article');
 const apiRouter = require('./routes/api');
+const authRouter = require('./routes/auth');
+
+
 const imageRouter = require('./routes/image');
 
 
@@ -60,6 +63,10 @@ app.use('/api_crud', apiCrudRouter);
 app.use('/analyzer', analyzerRouter);
 app.use('/article', articleRouter);
 app.use('/api', apiRouter);
+app.use('/auth', authRouter);
+
+
+
 app.use('/image', imageRouter);
 
 

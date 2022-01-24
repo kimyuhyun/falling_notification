@@ -405,12 +405,12 @@ router.get('/set_like1/:idx/:id', setLog, async function(req, res, next) {
 });
 
 router.post('/id_pass_confirm', setLog, async function(req, res, next) {
-    let { id, pass1, idx } = req.body;
+    const { id, pass1, idx } = req.body;
     var dbPass = '';
     var inPass = '';
 
     await new Promise(function(resolve, reject) {
-        let sql = `SELECT PASSWORD(?) as pass1 FROM dual`;
+        const sql = `SELECT PASSWORD(?) as pass1 FROM dual`;
         db.query(sql, pass1, function(err, rows, fields) {
             if (!err) {
                 resolve(rows[0]);
@@ -423,7 +423,7 @@ router.post('/id_pass_confirm', setLog, async function(req, res, next) {
     });
 
     await new Promise(function(resolve, reject) {
-        let sql = `SELECT pass1 FROM BOARD_tbl WHERE idx = ? AND id = ?`;
+        const sql = `SELECT pass1 FROM BOARD_tbl WHERE idx = ? AND id = ?`;
         db.query(sql, [idx, id], function(err, rows, fields) {
             if (!err) {
                 resolve(rows[0]);

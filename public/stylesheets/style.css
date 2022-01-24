@@ -1,3 +1,8 @@
+html {
+    min-width: 1400px;
+    overflow-x: auto;
+}
+
 .button_x {
     border: 0px;
     background: transparent;

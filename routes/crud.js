@@ -46,13 +46,13 @@ function userChecking(req, res, next) {
 }
 
 
-router.post('/list', userChecking, async function(req, res, next) {
+router.post('/list',  async function(req, res, next) {
     var table = req.query.table;
     var board_id = req.query.board_id;
     var level1 = req.query.level1;
     var step = req.query.step;
     var parent_idx = req.query.parent_idx;
-    var params;
+    var params = {};
 
     if (req.body.request != null) {
         params = JSON.parse(req.body.request);
@@ -61,7 +61,7 @@ router.post('/list', userChecking, async function(req, res, next) {
         params.limit = 10;
     }
 
-    // console.log(params);
+    console.log(params);
 
     var records = 0;
     var sql = "";
@@ -211,14 +211,6 @@ router.post('/write', userChecking, upload.array('FILES'), async function(req, r
     // console.log(sql, records);
 });
 
-router.get('/view', userChecking, async function(req, res, next) {
-    console.log('/view', req.body);
-
-    var arr = new Object();
-    arr['status'] = 'success';
-    res.send(arr);
-});
-
 router.post('/delete', userChecking, async function(req, res, next) {
     const table = req.body.table;
     const idx = req.body.idx;
@@ -232,16 +224,15 @@ router.post('/delete', userChecking, async function(req, res, next) {
 });
 
 router.post('/remove', userChecking, async function(req, res, next) {
-    var table = req.query.table;
-    var params = JSON.parse(req.body.request);
+    const table = req.query.table;
+    const params = JSON.parse(req.body.request);
     console.log(params);
-    var sql = ``;
     for (idx of params.selected) {
-        sql = `DELETE FROM ${table} WHERE idx = ${idx}`;
+        const sql = `DELETE FROM ${table} WHERE idx = ${idx}`;
         db.query(sql);
         console.log(sql);
     }
-    var arr = new Object();
+     var arr = new Object();
     arr['code'] = 1;
     res.send(arr);
 });
@@ -280,7 +271,7 @@ router.post('/copy', userChecking, async function(req, res, next) {
                     delete rows[0].modified;
                     delete rows[0].created;
 
-                    let records = [];
+                    var records = [];
                     sql = 'INSERT INTO ' + table + ' SET ';
                     for (key in rows[0]) {
                         if (rows[0][key] != 'null') {

@@ -1,46 +1,47 @@
-var express = require('express');
-var router = express.Router();
-var bodyParser = require('body-parser');
-var db = require('../db');
-var menus = require('../menu');
-var utils = require('../Utils');
+const express = require('express');
+const router = express.Router();
+const bodyParser = require('body-parser');
+const db = require('../db');
+const menus = require('../menu');
+const utils = require('../Utils');
 
 //메뉴를 전역변수에 넣어준다!
 global.MENUS = menus;
-global.SAVE_MENUS;
 global.CURRENT_URL;
+global.SHOW_MENU_LINK;
+global.LEVEL1;
 //
 
+router.get('/test', async function(req, res, next) {
+    res.render('./admin/test.html');
+});
+
 function userChecking(req, res, next) {
-    // if (process.env.NODE_ENV != 'development') {
-        if (req.session.mid == null) {
-            res.redirect('/admin/login');
-            return;
-        }
-    // }
+    if (req.session.mid == null) {
+        res.redirect('/admin/login');
+        return;
+    }
 
-    CURRENT_URL = req.baseUrl + req.path;
-
-    utils.setSaveMenu(req).then(function(data) {
-        SAVE_MENUS = data;
-        next();
-    });
-}
-
-router.get('/', userChecking, function(req, res, next) {
     db.query("SELECT show_menu_link FROM GRADE_tbl WHERE level1 = '?'", req.session.level1, function(err, rows, fields) {
         if (!err) {
             var tmp = "";
             if (rows.length > 0) {
                 tmp = rows[0].show_menu_link.substr(1, 9999).split(',');
             }
-            res.render('./admin/main', {
-                show_menu_link: tmp,
-                level1: req.session.level1,
-            });
+            CURRENT_URL = req.baseUrl + req.path;
+            SHOW_MENU_LINK = tmp;
+            LEVEL1 = req.session.level1;
+            next();
         } else {
             res.send(err);
         }
+    });
+}
+
+router.get('/', userChecking, function(req, res, next) {
+    console.log(req.session);
+    res.render('./admin/main', {
+        myinfo: req.session,
     });
 });
 
@@ -72,7 +73,7 @@ router.get('/logout', function(req, res, next) {
 
 // POST 는 body 로 받는다!!!
 router.post('/login', function(req, res, next) {
-    db.query("SELECT idx, id, name1, level1 FROM MEMB_tbl WHERE id = ? AND pass1 = PASSWORD(?)", [req.body.id, req.body.pw], function(err, rows, fields) {
+    db.query("SELECT idx, id, name1, level1, filename0 FROM MEMB_tbl WHERE id = ? AND pass1 = PASSWORD(?)", [req.body.id, req.body.pw], function(err, rows, fields) {
         if (!err) {
             if (rows[0] != null) {
                 //레벨체크
@@ -89,6 +90,7 @@ router.post('/login', function(req, res, next) {
                 req.session.mid = rows[0].id;
                 req.session.name1 = rows[0].name1;
                 req.session.level1 = rows[0].level1;
+                req.session.filename0 = rows[0].filename0;
 
                 if (req.body.remember == 1) {
                     res.cookie('id', rows[0].id, {
@@ -127,13 +129,21 @@ router.post('/login', function(req, res, next) {
 
 
 router.get('/my_profile', userChecking, function(req, res, next) {
-    var sql = "SELECT * FROM MEMB_tbl WHERE idx = ?";
+    const sql = "SELECT * FROM MEMB_tbl WHERE idx = ?";
 
     db.query(sql, req.session.idx, function(err, rows, fields) {
         if (!err) {
             res.render('./admin/my_profile', {
-                row: rows[0],
+                myinfo: rows[0],
             });
+
+            req.session.idx = rows[0].idx;
+            req.session.mid = rows[0].id;
+            req.session.name1 = rows[0].name1;
+            req.session.level1 = rows[0].level1;
+            req.session.filename0 = rows[0].filename0;
+
+            req.session.save();
         } else {
             console.log(err);
         }
@@ -141,10 +151,13 @@ router.get('/my_profile', userChecking, function(req, res, next) {
 });
 
 
-router.get('/page/:page', userChecking, function(req, res, next) {
+router.get('/page/:page/:menu1/:menu2', userChecking, function(req, res, next) {
+    console.log(req.session);
     res.render('./admin/' + req.params.page, {
         myinfo: req.session,
         board_id: req.params.page,
+        menu1: req.params.menu1,
+        menu2: req.params.menu2,
     });
 });
 
@@ -228,8 +241,8 @@ router.get('/codes', userChecking, async function(req, res, next) {
 });
 
 router.post('/add_code', userChecking, async function(req, res, next) {
-    let parentCode = req.body.parent_code;
-    let codeLength = parentCode.length;
+    const parentCode = req.body.parent_code;
+    const codeLength = parentCode.length;
     var code = '';
     var sort = 0;
 
@@ -305,9 +318,9 @@ router.post('/add_code', userChecking, async function(req, res, next) {
 });
 
 router.post('/modify_code', userChecking, async function(req, res, next) {
-    let { code1, name1, sort1 } = req.body;
+    const { code1, name1, sort1 } = req.body;
     await new Promise(function(resolve, reject) {
-        let sql = ` UPDATE CODES_tbl SET name1 = ?, sort1 = ? WHERE code1 = ? `;
+        const sql = ` UPDATE CODES_tbl SET name1 = ?, sort1 = ? WHERE code1 = ? `;
         db.query(sql, [name1, sort1, code1], function(err, rows, fields) {
             if (!err) {
                 resolve(rows);
@@ -323,9 +336,9 @@ router.post('/modify_code', userChecking, async function(req, res, next) {
 });
 
 router.post('/delete_code', userChecking, async function(req, res, next) {
-    let code1 = req.body.code1;
+    const code1 = req.body.code1;
     await new Promise(function(resolve, reject) {
-        let sql = ` DELETE FROM CODES_tbl WHERE code1 = ? `;
+        const sql = ` DELETE FROM CODES_tbl WHERE code1 = ? `;
         db.query(sql, code1, function(err, rows, fields) {
             if (!err) {
                 resolve(rows);
@@ -341,9 +354,9 @@ router.post('/delete_code', userChecking, async function(req, res, next) {
 });
 
 router.get('/get_code_data_count', async function(req, res, next) {
-    let code1 = req.query.code1;
+    const code1 = req.query.code1;
     await new Promise(function(resolve, reject) {
-        let sql = ` SELECT count(*) as cnt FROM QUIZ_tbl WHERE code1 = ? `;
+        const sql = ` SELECT count(*) as cnt FROM QUIZ_tbl WHERE code1 = ? `;
         db.query(sql, code1, function(err, rows, fields) {
             console.log(rows);
             if (!err) {

@@ -1,4 +1,4 @@
-var menu = [{
+const menu = [{
         "title": "회원관리",
         "child": [{
                 "title": "권한 관리",
@@ -31,7 +31,7 @@ var menu = [{
                 "link": "/admin/page/workout"
             },
             {
-                "title": "보조기/운동기구",
+                "title": "보조기",
                 "link": "/admin/page/supplements"
             },
         ]

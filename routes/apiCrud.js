@@ -76,6 +76,7 @@ router.post('/write', userChecking, async function(req, res, next) {
                 arr['msg'] = '등록 되었습니다.';
                 res.send(arr);
             } else {
+                console.log(err);
                 res.send(err);
             }
         });
