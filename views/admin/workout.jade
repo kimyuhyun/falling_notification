@@ -232,7 +232,7 @@ block content
             for (file of e.dataTransfer.files) {
                 let formData = new FormData();
                 formData.append("upload_file", file, file.name);
-            	axios.post("../../image/file_upload", formData).then(function(res) {
+            	axios.post("#{ process.env.IMAGE_SERVER }", formData).then(function(res) {
             		console.dir(res.data);
                     setTimeout(function() {
                         let i = $('.file_box').length;                
