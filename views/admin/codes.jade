@@ -61,7 +61,7 @@ block content
         });
         
         
-        const form = {
+        var form = {
             name: 'form',
             fields: [
                 { field: 'code1', type: 'text', required: true },
@@ -70,7 +70,7 @@ block content
             ],
             actions: {
                 add: function () {
-                    const errors = this.validate();
+                    var errors = this.validate();
                     if (errors.length > 0) {
                         return;
                     }
@@ -86,7 +86,7 @@ block content
                     });
                 },
                 del: function () {
-                    const errors = this.validate();
+                    var errors = this.validate();
                     if (errors.length > 0) {
                         return;
                     }
@@ -99,7 +99,7 @@ block content
                     }
                 },
                 update: function () {
-                    const errors = this.validate();
+                    var errors = this.validate();
                     if (errors.length > 0) {
                         return;
                     }

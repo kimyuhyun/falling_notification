@@ -32,9 +32,9 @@ block content
 
     //- 들여쓰기 중요함
     script.
-        const fileLimitCount = 10;
-        const table = 'BOARD_tbl';
-        const grid = {
+        var fileLimitCount = 10;
+        var table = 'BOARD_tbl';
+        var grid = {
             url: {
                 get: '/crud/list?table=' + table + '&board_id=!{ board_id }',
                 remove: '/crud/remove?table=' + table,
@@ -90,7 +90,7 @@ block content
                     return;
                 }
                 e.onComplete = function () {
-                    const sel = w2ui.grid.getSelection();
+                    var sel = w2ui.grid.getSelection();
                     if (sel.length == 1) {
                         w2ui.form.recid = sel[0];
                         formClear();
@@ -100,10 +100,10 @@ block content
                         console.log(w2ui.form.record);
                         
                         $(".file_fields").html('');
-                        for (const i = 0; i < fileLimitCount; i++) {
+                        for (var i = 0; i < fileLimitCount; i++) {
                             eval("var fileLink = w2ui.form.record.filename" + i);
                             if (fileLink != '') {
-                                const html = createHtml(fileLink);
+                                var html = createHtml(fileLink);
                                 $(".file_fields").append(html);
                             }
                         }
@@ -143,7 +143,7 @@ block content
                 },
             ],
         };
-        const form = {
+        var form = {
             name: 'form',
             fields: [
                 { field: 'title', type: 'text', required: true }, 
@@ -155,7 +155,7 @@ block content
                     $("#save").text("입력");
                 },
                 save: function () {
-                    const errors = this.validate();
+                    var errors = this.validate();
                     if (errors.length > 0) {
                         return;
                     }
@@ -165,8 +165,8 @@ block content
                     this.record.name1 = "#{ myinfo.name1 }";
                     this.record.board_id = "#{ board_id }";
                     //
-                    const formData = new FormData();
-                    for (const key in this.record) {
+                    var formData = new FormData();
+                    for (var key in this.record) {
                         formData.append(key, this.record[key]);
                     }
                     axios.post('/crud/write', formData).then(function (res) {
@@ -221,7 +221,7 @@ block content
             console.log("드래그한 항목을 떨어뜨렸을때", e.dataTransfer.files);
             e.preventDefault();
             
-            const size = $('.file_box').length + e.dataTransfer.files.length;
+            var size = $('.file_box').length + e.dataTransfer.files.length;
             
             if (size > fileLimitCount) {
                 w2alert('파일은 ' + fileLimitCount + '개 까지 등록 가능합니다.');
@@ -230,14 +230,14 @@ block content
             }
             
             for (file of e.dataTransfer.files) {
-                const formData = new FormData();
+                var formData = new FormData();
                 formData.append("upload_file", file, file.name);
             	axios.post("#{ process.env.IMAGE_SERVER }", formData).then(function(res) {
             		console.dir(res.data);
                     setTimeout(function() {
-                        const i = $('.file_box').length;                
+                        var i = $('.file_box').length;                
                         eval("w2ui.form.record.filename"+i+"='"+res.data.url+"';");
-                        const html = createHtml(res.data.url);
+                        var html = createHtml(res.data.url);
                         $(".file_fields").append(html);
                         $(".file_fields").removeClass("bg-dark");
                         w2ui.form.resize();
@@ -248,32 +248,32 @@ block content
             }
         }
         function deleteImage(obj) {
-            const i = $('.X').index(obj);
+            var i = $('.X').index(obj);
             console.log(i);
             $(".file_box").eq(i).remove();
                         
             //초기화
-            for (const i = 0; i < fileLimitCount; i++) {
+            for (var i = 0; i < fileLimitCount; i++) {
                 eval("w2ui.form.record.filename"+i+"='';");
         	}
             
             //파일 재정렬
             $('.file_box').each(function(i) {
-                const src = $('.file_image').eq(i).attr('src');
+                var src = $('.file_image').eq(i).attr('src');
                 eval("w2ui.form.record.filename"+i+"='"+src+"';");
             });
             //
         }
         function createHtml(url) {
-            const tmp = url.split('.');
-            const mimeType = tmp[tmp.length - 1];
+            var tmp = url.split('.');
+            var mimeType = tmp[tmp.length - 1];
             
-            const html = `<div class='file_box p-0 mt-2 me-2' style='position: relative; width: 70px; height: 70px;'>`;
+            var html = `<div class='file_box p-0 mt-2 me-2' style='position: relative; width: 70px; height: 70px;'>`;
             if ('jpg|jpeg|png|gif'.includes(mimeType)) {
                 html += `<img src='` + url + `' onclick=window.open('` + url + `') class='file_image img-thumbnail' style='width: 70px; height: 70px;' />`;
             } else {
                 tmp = url.split('/');
-                const filename = tmp[tmp.length - 1];
+                var filename = tmp[tmp.length - 1];
                 html += `<div onclick=window.open('` + url + `') class='file_image img-thumbnail d-flex flex-wrap align-items-center' style='width: 70px; height: 70px;'><div>` + filename + ` </div></div>`;
             }
             html += `    <img src='/images/photo_x.png' onclick='deleteImage(this);' class='X', style='position: absolute; cursor: pointer; top: -10px; right: -9px; width: 25px; height: 25px;' />`;
