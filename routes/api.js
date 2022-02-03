@@ -76,13 +76,89 @@ async function setLog(req, res, next) {
     next();
 }
 
-router.get('/get_episode/:code1', setLog, async function(req, res, next) {
-    const code1 = req.params.code1;
+router.get('/get_user_info/:id', setLog, async function(req, res, next) {
+    const id = req.params.id;
 
     var arr = [];
     await new Promise(function(resolve, reject) {
-        const sql = `SELECT code1, name1 FROM CODES_tbl WHERE LEFT(code1,4) = ? AND LENGTH(code1) = 6 ORDER BY sort1 DESC`;
-        db.query(sql, code1, function(err, rows, fields) {
+        const sql = `SELECT * FROM MEMB_tbl WHERE id = ?`;
+        db.query(sql, id, function(err, rows, fields) {
+            if (!err) {
+                resolve(rows);
+            } else {
+                console.log(err);
+                res.send(err);
+                return;
+            }
+        });
+    }).then(async function(data) {
+        arr = await utils.nvl(data);
+    });
+    res.send(arr);
+});
+
+
+router.post('/set_step_count', setLog, async function(req, res, next) {
+    const { id, date1, steps } = req.body;
+
+    // var arr = [];
+    // var cnt = 0;
+    // await new Promise(function(resolve, reject) {
+    //     const sql = `SELECT count(*) as cnt FROM STEPS_tbl WHERE id = ? AND date1 = ?`;
+    //     db.query(sql, [id, date1], function(err, rows, fields) {
+    //         if (!err) {
+    //             resolve(rows);
+    //         } else {
+    //             console.log(err);
+    //             res.send(err);
+    //             return;
+    //         }
+    //     });
+    // }).then(async function(data) {
+    //     cnt = data.cnt;
+    // });
+    //
+    // if (cnt == 0) {
+    //
+    // }
+
+
+
+    await new Promise(function(resolve, reject) {
+        const sql = `
+            INSERT INTO STEPS_tbl SET
+            id = ?,
+            date1 = ?,
+            steps = ?
+        `;
+        db.query(sql, [id, date1, steps], function(err, rows, fields) {
+            if (!err) {
+                resolve(rows);
+            } else {
+                console.log(err);
+                res.send(err);
+                return;
+            }
+        });
+    }).then();
+
+    //다음날을 리턴해준다!!
+    var next_date = moment().add(1, 'days').format('YYYY-MM-DD');
+    res.send({
+        next_date: next_date
+    });
+
+    //
+});
+
+
+router.get('/get_steps_list/:id', setLog, async function(req, res, next) {
+    const id = req.params.id;
+
+    var arr = [];
+    await new Promise(function(resolve, reject) {
+        const sql = `SELECT * FROM STEPS_tbl WHERE id = ? ORDER BY idx DESC`;
+        db.query(sql, id, function(err, rows, fields) {
             console.log(rows);
             if (!err) {
                 resolve(rows);
@@ -95,17 +171,16 @@ router.get('/get_episode/:code1', setLog, async function(req, res, next) {
     }).then(async function(data) {
         arr = await utils.nvl(data);
     });
-
     res.send(arr);
 });
 
-router.get('/get_quiz/:code1', setLog, async function(req, res, next) {
-    const code1 = req.params.code1;
+router.get('/get_my_workout_list/:id', setLog, async function(req, res, next) {
+    const id = req.params.id;
 
     var arr = [];
     await new Promise(function(resolve, reject) {
-        const sql = `SELECT * FROM QUIZ_tbl WHERE code1 = ? ORDER BY seq ASC`;
-        db.query(sql, code1, function(err, rows, fields) {
+        const sql = `SELECT idx, title, url, filename0 FROM BOARD_tbl WHERE board_id = 'workout' ORDER BY idx DESC`;
+        db.query(sql, function(err, rows, fields) {
             console.log(rows);
             if (!err) {
                 resolve(rows);
@@ -118,21 +193,17 @@ router.get('/get_quiz/:code1', setLog, async function(req, res, next) {
     }).then(async function(data) {
         arr = await utils.nvl(data);
     });
-
     res.send(arr);
 });
 
-router.get('/get_rand_quiz/:code1', setLog, async function(req, res, next) {
-    const code1 = req.params.code1;
-    var subjectArr = [];
-    var arr = [];
-    var i = 0;
+router.get('/get_my_supplements_list/:id', setLog, async function(req, res, next) {
+    const id = req.params.id;
 
-    //과목갯수 구하기!!
+    var arr = [];
     await new Promise(function(resolve, reject) {
-        const sql = `SELECT subject FROM QUIZ_tbl WHERE LEFT(code1, 4) = ? GROUP BY subject`;
-        db.query(sql, code1, function(err, rows, fields) {
-            // console.log(rows);
+        const sql = `SELECT idx, title, url, filename0 FROM BOARD_tbl WHERE board_id = 'supplements' ORDER BY idx DESC`;
+        db.query(sql, function(err, rows, fields) {
+            console.log(rows);
             if (!err) {
                 resolve(rows);
             } else {
@@ -142,34 +213,11 @@ router.get('/get_rand_quiz/:code1', setLog, async function(req, res, next) {
             }
         });
     }).then(async function(data) {
-        for (obj of await utils.nvl(data)) {
-            subjectArr.push(obj.subject);
-        }
+        arr = await utils.nvl(data);
     });
-
-
-    //과목별 랜덤 20개 씩가져온다!
-    for (subject of subjectArr) {
-        await new Promise(function(resolve, reject) {
-            const sql = `SELECT * FROM QUIZ_tbl WHERE LEFT(code1, 4) = ? AND subject = ? ORDER BY RAND() LIMIT 0, 20`;
-            db.query(sql, [code1,subject], function(err, rows, fields) {
-                if (!err) {
-                    resolve(rows);
-                } else {
-                    console.log(err);
-                    res.send(err);
-                    return;
-                }
-            });
-        }).then(async function(data) {
-            for (obj of await utils.nvl(data)) {
-                i++;
-                obj.rand_seq = i;
-                arr.push(obj);
-            }
-        });
-    }
     res.send(arr);
 });
+
+
 
 module.exports = router;

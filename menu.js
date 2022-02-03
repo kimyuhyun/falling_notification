@@ -24,7 +24,7 @@ const menu = [{
         ]
     },
     {
-        "title": "컨텐츠",
+        "title": "유튜브_컨텐츠",
         "child": [
             {
                 "title": "운동",

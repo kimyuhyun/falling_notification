@@ -41,7 +41,7 @@ block content
             },
             recid: 'idx',
             limit: 20,
-            recordHeight: 30,
+            recordHeight: 50,
             autoLoad: false,
             name: 'grid',
             show: {
@@ -122,10 +122,15 @@ block content
             ],
             columns: [
                 { field: 'idx', caption: '번호', size: '50px', sortable: true, resizable: true, attr: 'align=center' },	//세팅 해줘야함
-                { field: 'filename0', caption: '썸네일', size: '50px', sortable: true, resizable: true, attr: 'align=center',	//세팅 해줘야함
+                { field: 'filename0', caption: '썸네일', size: '86px', sortable: true, resizable: true, attr: 'align=center',	//세팅 해줘야함
                     render: function(record) {
-                        if (record.filename0 != '') {
-                            return '<img src="' + record.filename0 + '" style="width: 50px; height: 30px; margin: -3px 0 0 -3px;" />';
+                        if (record.url != '') {
+                            var tmp = record.url.split('v=');
+                            var thumb = `https://i1.ytimg.com/vi/${tmp[1]}/hqdefault.jpg`;
+                            
+                            return `<img src="${thumb}" style="width: 86px; height: 50px; margin: -3px 0 0 -3px;" />`;
+                        } else if (record.filename0 != '') {
+                            return '<img src="' + record.filename0 + '" style="width: 86px; height: 50px; margin: -3px 0 0 -3px;" />';
                         }
                     }
                 },
@@ -265,6 +270,7 @@ block content
             //
         }
         function createHtml(url) {
+            console.log(url);
             var tmp = url.split('.');
             var mimeType = tmp[tmp.length - 1];
             

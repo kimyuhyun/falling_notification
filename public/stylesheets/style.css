@@ -13,3 +13,11 @@ html {
 a {
     text-decoration: none;
 }
+
+
+.menu2 {
+    cursor: pointer;
+}
+.menu2:hover {
+    background: #fff;
+}
