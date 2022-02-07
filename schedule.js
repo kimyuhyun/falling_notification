@@ -6,8 +6,8 @@ const utils = require('./Utils');
 function start() {
     console.log('start', moment().format('YYYY-MM-DD HH:mm:ss'));
     var arr = [];
-    cron.schedule('30 15 1-31 * *', function () {
-        console.log('30분 15시 매일 작업 실행', moment().format('YYYY-MM-DD HH:mm:ss'));
+    cron.schedule('30 12 1-31 * *', function () {
+        console.log('30분 12시 매일 작업 실행', moment().format('YYYY-MM-DD HH:mm:ss'));
 
         const sql = `SELECT susul_date, id, fcm FROM MEMB_tbl WHERE type1 = 1 `;
         db.query(sql, async function(err, rows, fields) {
