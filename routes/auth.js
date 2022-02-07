@@ -7,6 +7,7 @@ const utils = require('../Utils');
 const moment = require('moment');
 const requestIp = require('request-ip');
 const commaNumber = require('comma-number');
+const axios = require('axios');
 
 
 async function setLog(req, res, next) {
@@ -72,6 +73,14 @@ router.get('/is_memb/:id', setLog, async function(req, res, next) {
 
 });
 
+
+
+//푸시 테스트!
+// http://localhost:3001/auth/ptest
+router.get('/ptest', setLog, async function(req, res, next) {
+    var fcmArr = ['enNDpMjgTGWApEm-3qG3d1:APA91bHQc5kwjyaIvvQqxkCRcqsGBcRXUr_jbxxrntTqjAUrcs2GTfZyh3hmhko_oEBcTqMW5Ft_bJgXwTm04eDayGGJsAjoEydKMgXtaSGRr9mFYHE-xBKRhyiuoDQNH7H5pf0r73wW'];
+    utils.sendPush(fcmArr, 'ptest','ptest입니다!');
+});
 
 
 module.exports = router;

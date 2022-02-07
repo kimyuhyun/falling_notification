@@ -101,29 +101,6 @@ router.get('/get_user_info/:id', setLog, async function(req, res, next) {
 router.post('/set_step_count', setLog, async function(req, res, next) {
     const { id, date1, steps } = req.body;
 
-    // var arr = [];
-    // var cnt = 0;
-    // await new Promise(function(resolve, reject) {
-    //     const sql = `SELECT count(*) as cnt FROM STEPS_tbl WHERE id = ? AND date1 = ?`;
-    //     db.query(sql, [id, date1], function(err, rows, fields) {
-    //         if (!err) {
-    //             resolve(rows);
-    //         } else {
-    //             console.log(err);
-    //             res.send(err);
-    //             return;
-    //         }
-    //     });
-    // }).then(async function(data) {
-    //     cnt = data.cnt;
-    // });
-    //
-    // if (cnt == 0) {
-    //
-    // }
-
-
-
     await new Promise(function(resolve, reject) {
         const sql = `
             INSERT INTO STEPS_tbl SET

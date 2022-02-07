@@ -10,6 +10,8 @@ const requestIp = require('request-ip');
 const logger = require('morgan');
 const db = require('./db');
 
+const schedule = require('./schedule');
+
 const indexRouter = require('./routes/index');
 const adminRouter = require('./routes/admin');
 const crudRouter = require('./routes/crud');
@@ -18,15 +20,9 @@ const analyzerRouter = require('./routes/analyzer');
 const articleRouter = require('./routes/article');
 const apiRouter = require('./routes/api');
 const authRouter = require('./routes/auth');
-
-
 const imageRouter = require('./routes/image');
 
-
-
-
 const app = express();
-
 
 app.use(requestIp.mw());
 app.use(session({
@@ -92,5 +88,7 @@ app.use(function(err, req, res, next) {
     res.status(err.status || 500);
     res.render('error');
 });
+
+schedule.start();
 
 module.exports = app;
