@@ -14,6 +14,11 @@ block content
                         label 제목
                         div
                             input(name='title')
+                            
+                    div(class='w2ui-field w2ui-span2')                    
+                        label 주(Week)
+                        div
+                            input(name='week')
 
                     div(class='w2ui-field w2ui-span2')
                         label URL
@@ -133,6 +138,7 @@ block content
                     }
                 },
                 { field: 'title', caption: '제목', size: '100%', min: 250, sortable: true, resizable: true, attr: 'align=left' },	//세팅 해줘야함
+                { field: 'week', caption: '주', size: '50px', resizable: true, sortable: true, attr: 'align=center' },	//세팅 해줘야함
                 { field: 'name1', caption: '작성자', size: '80px', resizable: true, sortable: true, attr: 'align=center' },	//세팅 해줘야함
                 { field: 'created', caption: '생성일', size: '80px', resizable: true, sortable: true, attr: 'align=center',
                     render: function(rec) {
@@ -150,7 +156,8 @@ block content
             name: 'form',
             fields: [
                 { field: 'title', type: 'text', required: true }, 
-                { field: 'url', type: 'text' },
+                { field: 'week', type: 'int', required: true }, 
+                { field: 'url', type: 'text', required: true }, 
             ],
             actions: {
                 reset: function () {

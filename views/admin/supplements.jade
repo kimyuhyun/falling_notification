@@ -14,6 +14,11 @@ block content
                         label 제목
                         div
                             input(name='title')
+                            
+                    div(class='w2ui-field w2ui-span2')                    
+                        label 주(Week)
+                        div
+                            input(name='week')
 
                     div(class='w2ui-field w2ui-span2')
                         label URL
@@ -124,10 +129,9 @@ block content
                 { field: 'idx', caption: '번호', size: '50px', sortable: true, resizable: true, attr: 'align=center' },	//세팅 해줘야함
                 { field: 'filename0', caption: '썸네일', size: '86px', sortable: true, resizable: true, attr: 'align=center',	//세팅 해줘야함
                     render: function(record) {
-                        if (record.url != '') {
-                            var tmp = record.url.split('v=');
+                        var tmp = record.url.split('v=');
+                        if (tmp.length == 2) {
                             var thumb = `https://i1.ytimg.com/vi/${tmp[1]}/hqdefault.jpg`;
-                            
                             return `<img src="${thumb}" style="width: 86px; height: 50px; margin: -3px 0 0 -3px;" />`;
                         } else if (record.filename0 != '') {
                             return '<img src="' + record.filename0 + '" style="width: 86px; height: 50px; margin: -3px 0 0 -3px;" />';
@@ -135,6 +139,7 @@ block content
                     }
                 },
                 { field: 'title', caption: '제목', size: '100%', min: 250, sortable: true, resizable: true, attr: 'align=left' },	//세팅 해줘야함
+                { field: 'week', caption: '주', size: '50px', resizable: true, sortable: true, attr: 'align=center' },	//세팅 해줘야함
                 { field: 'name1', caption: '작성자', size: '80px', resizable: true, sortable: true, attr: 'align=center' },	//세팅 해줘야함
                 { field: 'created', caption: '생성일', size: '80px', resizable: true, sortable: true, attr: 'align=center',
                     render: function(rec) {
@@ -152,7 +157,8 @@ block content
             name: 'form',
             fields: [
                 { field: 'title', type: 'text', required: true }, 
-                { field: 'url', type: 'text' },
+                { field: 'week', type: 'int', required: true }, 
+                { field: 'url', type: 'text', required: true }, 
             ],
             actions: {
                 reset: function () {

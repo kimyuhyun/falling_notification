@@ -73,7 +73,8 @@ router.get('/logout', function(req, res, next) {
 
 // POST 는 body 로 받는다!!!
 router.post('/login', function(req, res, next) {
-    db.query("SELECT idx, id, name1, level1, filename0 FROM MEMB_tbl WHERE id = ? AND pass1 = PASSWORD(?)", [req.body.id, req.body.pw], function(err, rows, fields) {
+    const sql = `SELECT idx, id, name1, level1, filename0 FROM MEMB_tbl WHERE id = ? AND pass1 = PASSWORD(?)`;
+    db.query(sql, [req.body.id, req.body.pw], function(err, rows, fields) {
         if (!err) {
             if (rows[0] != null) {
                 //레벨체크

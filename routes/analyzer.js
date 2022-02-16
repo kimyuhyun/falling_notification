@@ -1,6 +1,5 @@
 var express = require('express');
 var router = express.Router();
-var bodyParser = require('body-parser');
 var fs = require('fs');
 var db = require('../db');
 var menus = require('../menu');

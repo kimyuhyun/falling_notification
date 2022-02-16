@@ -21,73 +21,74 @@ html
         script(src='/javascripts/utils.js')
 
     body(class='bg-white')
-        div(class='d-flex flex-row align-items-center border-bottom' style='height: 70px;')
-            div(class='text-center' style='width: 250px; cursor: pointer;' onclick='location.href=\'#{ process.env.HOST_NAME }/admin\'') 낙상알림 관리자
-            div(class='flex-grow-1')
-            div(class='ps-1')
-                if myinfo.filename0 != null && myinfo.filename0 != ''
-                    img(src='#{ myinfo.filename0 }' class='rounded-circle' style='width: 40px; height: 40px;')
-            
-            div(class='pe-1')
-                div(class='dropdown')
-                    button(class='btn dropdown-toggle' type='button' id="dropdownMenu2" data-bs-toggle='dropdown' aria-expanded='false') #{ myinfo.name1 }
-                    ul(class='dropdown-menu' aria-labelledby="dropdownMenu2")
-                        li
-                            a(class='dropdown-item' href='/admin/my_profile') 나의프로필
-                        li
-                            a(class='dropdown-item' href='/admin/logout') 로그아웃
+        div(class='d-flex flex-column' style='height: 100vh;')
+            div(class='d-flex flex-row align-items-center border-bottom' style='height: 70px;')
+                div(class='text-center' style='width: 250px; cursor: pointer;' onclick='location.href=\'#{ process.env.HOST_NAME }/admin\'') RCP2
+                div(class='flex-grow-1')
+                div(class='ps-1')
+                    if myinfo.filename0 != null && myinfo.filename0 != ''
+                        img(src='#{ myinfo.filename0 }' class='rounded-circle' style='width: 40px; height: 40px;')
                 
-        div(class='d-flex flex-row')
-            div(class='border-end bg-light', style='width: 250px; height: 100vh;')
-                - var target = '';
-                - var active = '';
-                - var m1 = '';
-                - var m2 = '';
-                - var i = -1;
-                - var navTitle1 = '';
-                - var navTitle2 = '';
+                div(class='pe-1')
+                    div(class='dropdown')
+                        button(class='btn dropdown-toggle' type='button' id="dropdownMenu2" data-bs-toggle='dropdown' aria-expanded='false') #{ myinfo.name1 }
+                        ul(class='dropdown-menu' aria-labelledby="dropdownMenu2")
+                            li
+                                a(class='dropdown-item' href='/admin/my_profile') 나의프로필
+                            li
+                                a(class='dropdown-item' href='/admin/logout') 로그아웃
                 
-                - each row1 in MENUS
-                    - i = i + 1;
-                    - target = row1.title + i;
+            div(class='d-flex flex-row flex-grow-1')
+                div(class='border-end bg-light', style='width: 250px; height: 100%;')
+                    - var target = '';
+                    - var active = '';
+                    - var m1 = '';
+                    - var m2 = '';
+                    - var i = -1;
+                    - var navTitle1 = '';
+                    - var navTitle2 = '';
                     
-                    if i == menu1 
-                        - active = 'show';
-                        - m1 = 'text-primary';
-                    else
-                        - active = '';
-                        - m1 = 'collapsed';
-                
-                    div(class='accordion accordion-flush' id='#{ row1.title }')
-                        div(class='accordion-item')
-                            h2(class='accordion-header' id='#{ row1.title }')
-                                button(class='#{ m1 } accordion-button bg-light' style='box-shadow: none;' type='button' data-bs-toggle='collapse' data-bs-target='##{ target }' aria-expanded='false' aria-controls='#{ target }')
-                                    =row1.title
+                    - each row1 in MENUS
+                        - i = i + 1;
+                        - target = row1.title + i;
+                        
+                        if i == menu1 
+                            - active = 'show';
+                            - m1 = 'text-primary';
+                        else
+                            - active = '';
+                            - m1 = 'collapsed';
                     
-                            div(id='#{ target }' class='bg-light accordion-collapse collapse #{ active }' aria-labelledby='#{ row1.title }' data-bs-parent='#{ row1.title }')
-                                div(class='accordion-body p-0')
-                                    - var j = -1;
-                                    - each row2 in row1.child
-                                        - j = j + 1;
-                                        
-                                        if active == 'show' && j == menu2
-                                            - m2 = 'text-primary bg-white';
-                                            - navTitle1 = row1.title;
-                                            - navTitle2 = row2.title;
-                                        else
-                                            - m2 = 'text-dark';
+                        div(class='accordion accordion-flush' id='#{ row1.title }')
+                            div(class='accordion-item')
+                                h2(class='accordion-header' id='#{ row1.title }')
+                                    button(class='#{ m1 } accordion-button bg-light' style='box-shadow: none;' type='button' data-bs-toggle='collapse' data-bs-target='##{ target }' aria-expanded='false' aria-controls='#{ target }')
+                                        =row1.title
+                        
+                                div(id='#{ target }' class='bg-light accordion-collapse collapse #{ active }' aria-labelledby='#{ row1.title }' data-bs-parent='#{ row1.title }')
+                                    div(class='accordion-body p-0')
+                                        - var j = -1;
+                                        - each row2 in row1.child
+                                            - j = j + 1;
                                             
-                                        
-                                        //- 전체관리자는 체크하지 않는다..
-                                        if LEVEL1 > 1
-                                            - each tmp in SHOW_MENU_LINK
-                                                if row2.link == tmp                                            
-                                                    div(class='#{ m2 } w-100 text-start py-3 ps-4 menu2' onclick='location.href="#{ row2.link }/#{i}/#{j}"') #{row2.title}
-                                        else
-                                            div(class='#{ m2 } w-100 text-start py-3 ps-4 menu2' onclick='location.href="#{ row2.link }/#{i}/#{j}"') #{row2.title}
+                                            if active == 'show' && j == menu2
+                                                - m2 = 'text-primary bg-white';
+                                                - navTitle1 = row1.title;
+                                                - navTitle2 = row2.title;
+                                            else
+                                                - m2 = 'text-dark';
                                                 
-                                    
-            div(class='flex-grow-1 p-4')
-                div(class='text-secondary') #{ navTitle1 }
-                h3(style='margin-top: -5px;') #{ navTitle2 }
-                block content
+                                            
+                                            //- 전체관리자는 체크하지 않는다..
+                                            if LEVEL1 > 1
+                                                - each tmp in SHOW_MENU_LINK
+                                                    if row2.link == tmp                                            
+                                                        div(class='#{ m2 } w-100 text-start py-3 ps-4 menu2' onclick='location.href="#{ row2.link }/#{i}/#{j}"') #{row2.title}
+                                            else
+                                                div(class='#{ m2 } w-100 text-start py-3 ps-4 menu2' onclick='location.href="#{ row2.link }/#{i}/#{j}"') #{row2.title}
+                                                    
+                                        
+                div(class='flex-grow-1 p-4')
+                    div(class='text-secondary') #{ navTitle1 }
+                    h3(style='margin-top: -5px;') #{ navTitle2 }
+                    block content
